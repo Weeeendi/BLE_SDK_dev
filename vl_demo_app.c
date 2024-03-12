@@ -10,4 +10,10 @@
  */
 
 #include "vl_type.h"
+#include "vl_ble_event.h"
+#include "vl_ble_handle.h"
+#include "vl_ble_productTest.h"
 
+void main(void){
+
+}

@@ -12,6 +12,9 @@
 #ifndef VL_BLE_EVENT_H
 #define VL_BLE_EVENT_H
 
+#include "vl_log.h"
+#include "vl_config.h"
 
+const unsigned char OVERTIME = 30;
 
 #endif

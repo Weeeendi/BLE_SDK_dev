@@ -14,21 +14,73 @@
 
 #include "vl_type.h"
 
+#define BLE_SERVICE_USED        1       //用到的蓝牙服务数量
+#define BLE_CHARACTER_USED      2       //用到的特征字数量
 
-UINT8 ble_initialize();
 /**
- * @brief 
- * Starts Bluetooth advertising.
- *
- * This function initiates the Bluetooth LE advertising process for the device, broadcasting its presence and optionally providing a scan response when scanned by other devices.
- *
+ * @brief BLE control parameter configuration 
+ */
+typedef struct bt_control_param_t
+{
+    uint32_t multi_mode:1;  //0:disable connect multiple,1:enable connect multiple
+    uint32_t reserved:31;  //
+}bt_control_param;
+
+/**
+ * @brief BLE Service parameter configuration
+ */
+typedef struct bt_svc_param_t
+{
+    uint8_t svc_uuid[16];  /// 128 bits UUID
+
+    struct bt_character{
+        uint16_t uuid[16];  //128bit UUID
+        uint16_t permission;//reference to bt_character_perm
+    }character[BLE_CHARACTER_USED];
+}bt_svc_param;
+
+typedef struct{
+    bt_control_param ctrl_param;    //蓝牙控制参数
+    uint8_t device_name[32];        //蓝牙设备名.4字符以上有效。如全为0x00或无效名称，则使用自带默认名称
+    uint8_t adv_data[31];           //广播数据，实际有效长度30
+    uint8_t adv_data_len;           //广播数据
+    uint8_t scan_rsp_data[31];      //广播应答数据，实际有效长度30
+    uint8_t scan_rsp_data_len;      //广播应答数据
+    uint8_t device_addr[6];        //MAC address
+
+    //adv data
+    bt_svc_param service[BLE_SERVICE_USED];
+}ble_attr_param_t;
+
+
+/** @brief 
+ * Initializes the Bluetooth stack.
  * @param advertisementData A pointer to an array containing the advertisement data. This typically includes the device name, service UUIDs, etc.
  * @param scanResponseData A pointer to an array with the scan response data. It is used to provide additional information when the device is being scanned.
  * @param adv_len The length of the advertisementData array in bytes.
  * @param scan_rsp_len The length of the scanResponseData array in bytes.
+ */
+UINT8 ble_initialize(ble_attr_param_t attr_param);
+
+
+/**
+ * @brief 
+ * Starts Bluetooth advertising.
+ *
+ * This function initiates the Bluetooth LE advertising process for the device,
+ * broadcasting its presence and optionally providing a scan response when scanned by other devices.
+ *
+ * @param VOID
  * @return No return value (VOID).
  */
-VOID ble_startAdv(UINT8* advertisementData,UINT8* scanResponseData,UINT8 adv_len,UINT8 scan_rsp_len);
+VOID ble_startAdv(VOID);
+
+
+/**
+ * @brief Stop the advertising.
+ * @return No return value (VOID).
+ */
+VOID ble_stopAdv(VOID);
 
 /**
  * @brief Change the advertising data.
@@ -47,11 +99,6 @@ VOID ble_changeAdvertisingData(UINT8* advertisementData,UINT8 adv_len);
  */
 VOID ble_setAdvParameter(UINT16 adv_interval,UINT16 max_interval,UINT16 min_interval);
 
-/**
- * @brief Stop the advertising.
- * @return No return value (VOID).
- */
-VOID ble_stopAdv();
 
 /**
  * @brief Disconnect the connection.

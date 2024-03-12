@@ -14,7 +14,6 @@
 #include "vl_type.h"
 
 VOID tal_inverted_array(UINT8 *array,UINT16 length);
-UINT8 tal_check_sum(UINT8 *pbuf,UINT16 len);
 VOID tal_util_hextoasciiUpper(UINT8 *hexbuf,UINT8 len,UINT8 *ascbuf);
 VOID tal_util_hextoasciiLower(UINT8 *hexbuf,UINT8 len,UINT8 *ascbuf);
 UINT32 tal_util_byte2int(const UINT8 value[4]);

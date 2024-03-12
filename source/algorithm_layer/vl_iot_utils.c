@@ -23,12 +23,6 @@ VOID tal_inverted_array(UINT8 *array,UINT16 length)
     }
 }
 
-UINT8 tal_check_sum(UINT8 *pbuf,UINT16 len){
-    UINT32 i = 0,ck_sum = 0;
-    for(i = 0; i<len ; i++)
-        ck_sum += pbuf[i];
-    return (UINT8)ck_sum;
-}
 
 VOID tal_util_hextoasciiUpper(UINT8 *hexbuf,UINT8 len,UINT8 *ascbuf)
 {

@@ -24,12 +24,6 @@ extern "C" {
  */
 void vl_log_init(void);
 
-/**
- * @brief  Change SDK log level
- * 
- * @param level Change log level @ref vl_log_level_t
- */
-void vl_log_change_level(vl_log_level_t level);
 
 /**
  * @brief Send SDK LOG with String
@@ -38,17 +32,9 @@ void vl_log_change_level(vl_log_level_t level);
  * @param format 
  * @param ... 
  */
-void vl_log_write(const CHAR* tag, const CHAR* format, ...);
+void vl_log_write(UINT8* log_buf,UINT16 bufsize);
 
 
-/**
- * @brief Send SDK LOG with hex data
- * 
- * @param tag 
- * @param format 
- * @param ... 
- */
-void vl_log_write_hex( const CHAR* tag, const CHAR* format, ...);
 
 #ifdef __cplusplus
 }

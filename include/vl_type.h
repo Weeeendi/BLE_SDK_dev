@@ -187,7 +187,7 @@ typedef enum {
     VL_FLASH_ERR_WRITE,   
     VL_FLASH_ERR_READ,    
 
-} vl_ble_status_t;
+} vl_status_t;
 
 typedef struct vl_ble_type
 {
@@ -210,17 +210,5 @@ typedef struct vl_iot_type
     /* data */
 }vl_iot_type_t;
 
-#ifndef VL_LOG_LEVEL
-#define VL_LOG_LEVEL
-typedef enum
-{
-    VL_LOG_LEVEL_DEBUG = 0,
-    VL_LOG_LEVEL_INFO,
-    VL_LOG_LEVEL_WARN,
-    VL_LOG_LEVEL_ERROR,
-    VL_LOG_LEVEL_FATAL,
-    VL_LOG_LEVEL_MAX
-}vl_log_level_t;
-#endif
 
 #endif

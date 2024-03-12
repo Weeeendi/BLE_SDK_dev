@@ -20,20 +20,21 @@ extern "C" {
 
 typedef struct {
     void * buf;
+    uint16_t unit_size;
     uint8_t size;
     uint8_t offset;
     uint8_t rd_ptr;
     uint8_t wr_ptr;
     uint8_t used;
-} vl_ble_queue_t;
+} vl_queue_t;
 
-vl_ble_status_t vl_ble_queue_init(vl_ble_queue_t *q, void *buf, uint8_t size, uint8_t elem_size);
-vl_ble_status_t vl_ble_enqueue(vl_ble_queue_t *q, void *in);
-vl_ble_status_t vl_ble_queue_get(vl_ble_queue_t *q, void *out);
-vl_ble_status_t vl_ble_dequeue(vl_ble_queue_t *q, void *out);
-void vl_ble_queue_decrease(vl_ble_queue_t *q);
-void vl_ble_queue_flush(vl_ble_queue_t *q);
-uint8_t vl_ble_get_queue_used(vl_ble_queue_t *q);
+vl_status_t vl_queue_init(vl_queue_t *q, void *buf, uint16_t elem_size, uint8_t queue_depth);
+vl_status_t vl_enqueue(vl_queue_t *q, void *in);
+vl_status_t vl_queue_get(vl_queue_t *q, void *out);
+vl_status_t vl_dequeue(vl_queue_t *q, void *out);
+void vl_queue_decrease(vl_queue_t *q);
+void vl_queue_flush(vl_queue_t *q);
+uint8_t vl_get_queue_used(vl_queue_t *q);
 
 #ifdef __cplusplus
 }

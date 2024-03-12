@@ -22,7 +22,7 @@
  *
  * @return No return value (void).
  */
-void vl_nv_flash_init();
+vl_status_t vl_nv_flash_init();
 
 
 /**
@@ -35,7 +35,7 @@ void vl_nv_flash_init();
  * @param len The length of the data to be written.
  * @return No return value (void).
  */
-void vl_nv_flash_write(UINT32 addr, UINT8* data,UINT16 len);
+vl_status_t vl_nv_flash_write(UINT32 addr, UINT8* data,UINT16 len);
 
 /**
  * @brief This function reads data from the non-volatile flash memory subsystem. 
@@ -45,7 +45,7 @@ void vl_nv_flash_write(UINT32 addr, UINT8* data,UINT16 len);
  * @param len The length of the data to be read.
  * @return No return value (void).
  */
-void vl_nv_flash_read(UINT32 addr,UINT8* data,UINT16 len);
+vl_status_t vl_nv_flash_read(UINT32 addr,UINT8* data,UINT16 len);
 
 
 /**
@@ -55,7 +55,7 @@ void vl_nv_flash_read(UINT32 addr,UINT8* data,UINT16 len);
  * @param len The length of the data to be erased.
  * @return No return value (void).
  */
-void vl_nv_flash_erase(UINT32 addr,UINT8 len);
+vl_status_t vl_nv_flash_erase(UINT32 addr,UINT8 len);
 
 
 

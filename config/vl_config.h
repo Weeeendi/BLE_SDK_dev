@@ -24,6 +24,12 @@
 #define IOT_MCU_SOFTVER "1.0.0"
 #define IOT_MCU_HARDVER "1.0.0"
 
+
+#ifndef VL_LOG_ENABLE
+#define VL_LOG_ENABLE 1
+#endif
+
+
 #ifdef VL_LOG_ENABLE
 
 #ifndef VL_APP_LOG_ENABLE
@@ -35,6 +41,15 @@
 #endif
 
 #endif
+
+/******************************************************************************
+ 								System working mode
+ ******************************************************************************/
+#define         NORMAL_MODE             0x00                                    //Normal working state
+#define         FACTORY_MODE            0x01                                    //Factory model
+#define         UPDATE_MODE             0X02      
+#define         LOWERPOWER_MODE         0x03
+
 
 /* DP define*/
 /******************************************************************************

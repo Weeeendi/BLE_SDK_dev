@@ -1,6 +1,6 @@
 #include "CRC32.h"
 
-const uint32_t crc_table[256] = {            //CRC32?????
+const uint32_t crc_table[256] = {            //CRC32 tabel
   0x00000000L, 0x77073096L, 0xee0e612cL, 0x990951baL, 0x076dc419L,
   0x706af48fL, 0xe963a535L, 0x9e6495a3L, 0x0edb8832L, 0x79dcb8a4L,
   0xe0d5e91eL, 0x97d2d988L, 0x09b64c2bL, 0x7eb17cbdL, 0xe7b82d07L,
@@ -118,7 +118,7 @@ const uint8_t auchCRCLo[] =
 } ;
 
 
-/* CRC 余式表 */
+/* CRC16 Table */
 static const uint16_t TBL_CRC16[256] =
 {
    0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,     
@@ -195,7 +195,7 @@ const uint32_t* get_crc_table()
 uint32_t crc32(uint8_t* buf, uint32_t len)
 {
   //    if (buf == Z_NULL) return 0L;
-  uint32_t crc = 0;   //????????? 
+  uint32_t crc = 0;   
   crc = crc ^ 0xffffffffL;
   while (len >= 8)
   {
@@ -209,7 +209,7 @@ uint32_t crc32(uint8_t* buf, uint32_t len)
 }
 
 uint32_t CRC32_HaveInitVal(uint32_t initVal,uint8_t *buf, uint16_t len){
-  uint32_t crc = initVal;   //????????? 
+  uint32_t crc = initVal;  
   crc = crc ^ 0xffffffffL;
   while (len >= 8)
   {
@@ -223,36 +223,23 @@ uint32_t CRC32_HaveInitVal(uint32_t initVal,uint8_t *buf, uint16_t len){
 }
 
 
-uint16_t CRC16(uint8_t *puchMsg, uint16_t usDataLen)
+uint16_t CalcCRC16(uint8_t *puchMsg, uint16_t usDataLen)
 {
-  uint8_t uchCRCHi = 0xFF ;    // ��CRC�ֽڳ�ʼ��
-  uint8_t uchCRCLo = 0xFF ;    // ��CRC �ֽڳ�ʼ��
+  uint8_t uchCRCHi = 0xFF ;    
+  uint8_t uchCRCLo = 0xFF ;    
   
-  uint16_t uIndex ;                  // CRCѭ���е�����������ʲô�����أ���
-  while (usDataLen--)                // ������Ϣ������ 
+  uint16_t uIndex ;                 
+  while (usDataLen--)                
   {
-    uIndex = uchCRCHi ^ *puchMsg++ ; // ����CRC        
+    uIndex = uchCRCHi ^ *puchMsg++ ;       
     uchCRCHi = uchCRCLo ^ auchCRCHi[uIndex] ;
     uchCRCLo = auchCRCLo[uIndex] ;
   }
   return (uchCRCHi << 8 | uchCRCLo) ;
 }
 
-uint16_t CRC16_HaveInitVal(uint16_t initVal,uint8_t *puchMsg, uint16_t usDataLen){
-  uint8_t uchCRCHi = initVal>>8 ;    // ��CRC�ֽڳ�ʼ��
-  uint8_t uchCRCLo = initVal & 0xFF ;    // ��CRC �ֽڳ�ʼ��
-  
-  uint16_t uIndex ;                  // CRCѭ���е�����������ʲô�����أ���
-  while (usDataLen--)                // ������Ϣ������ 
-  {
-    uIndex = uchCRCHi ^ *puchMsg++ ; // ����CRC        
-    uchCRCHi = uchCRCLo ^ auchCRCHi[uIndex] ;
-    uchCRCLo = auchCRCLo[uIndex] ;
-  }
-  return (uchCRCHi << 8 | uchCRCLo) ;
-}
 
-uint8_t GetSUN(void *pStart, uint16_t uSize)
+uint8_t checkSUM(void *pStart, uint16_t uSize)
 {
   uint8_t *pData;
   uint8_t  CheckSun=0;
