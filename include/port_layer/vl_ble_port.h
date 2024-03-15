@@ -50,7 +50,7 @@ typedef struct{
 
     //adv data
     bt_svc_param service[BLE_SERVICE_USED];
-}ble_attr_param_t;
+}vl_ble_attr_param_t;
 
 
 /** @brief 
@@ -60,7 +60,7 @@ typedef struct{
  * @param adv_len The length of the advertisementData array in bytes.
  * @param scan_rsp_len The length of the scanResponseData array in bytes.
  */
-UINT8 ble_initialize(ble_attr_param_t attr_param);
+vl_status_t vl_ble_initialize(vl_ble_attr_param_t* attr_param);
 
 
 /**
@@ -73,14 +73,14 @@ UINT8 ble_initialize(ble_attr_param_t attr_param);
  * @param VOID
  * @return No return value (VOID).
  */
-VOID ble_startAdv(VOID);
+vl_status_t vl_ble_startAdv(VOID);
 
 
 /**
  * @brief Stop the advertising.
  * @return No return value (VOID).
  */
-VOID ble_stopAdv(VOID);
+vl_status_t vl_ble_stopAdv(VOID);
 
 /**
  * @brief Change the advertising data.
@@ -88,7 +88,7 @@ VOID ble_stopAdv(VOID);
  * @param adv_len The length of the advertisementData array in bytes.
  * @return No return value (VOID).
  */
-VOID ble_changeAdvertisingData(UINT8* advertisementData,UINT8 adv_len);
+vl_status_t vl_ble_changeAdvData(UINT8* advertisementData,UINT8 adv_len);
 
 /**
  * @brief Change the scan response data.
@@ -97,14 +97,14 @@ VOID ble_changeAdvertisingData(UINT8* advertisementData,UINT8 adv_len);
  * @param min_interval The interval of the advertise minimum interval.
  * @return No return value (VOID).
  */
-VOID ble_setAdvParameter(UINT16 adv_interval,UINT16 max_interval,UINT16 min_interval);
+vl_status_t vl_ble_setAdvParam(UINT16 adv_interval,UINT16 max_interval,UINT16 min_interval);
 
 
 /**
  * @brief Disconnect the connection.
  * @return No return value (VOID).
  */
-VOID ble_disconnect();
+vl_status_t vl_ble_disconnect();
 
 /**
  * @brief Set the connection parameter.
@@ -113,14 +113,14 @@ VOID ble_disconnect();
  * @param conn_timeout The connection timeout in 10ms units.
  * @return No return value (VOID).
  */
-VOID ble_setConnectionParameter(UINT16 interval,UINT16 latency,UINT16 timeout,UINT16 min_interval,UINT16 max_interval);
+vl_status_t vl_ble_setConnParam(UINT16 interval,UINT16 latency,UINT16 timeout,UINT16 min_interval,UINT16 max_interval);
 
 /**
  * @brief Set the MTU size.
  * @param mtu The MTU size(ATT-3).
  * @return No return value (VOID).
  */
-VOID ble_MTUset(UINT8 mtu);
+vl_status_t vl_ble_MTUset(UINT8 mtu);
 
 /**
  * @brief Send data to the remote device.
@@ -128,20 +128,20 @@ VOID ble_MTUset(UINT8 mtu);
  * @param len The length of the data to be sent.
  * @return No return value (VOID).
  */
-VOID ble_send_data(UINT8* data,UINT16 len);
+vl_status_t vl_ble_send_data(UINT8* data,UINT16 len);
 
 /**
  * @brief Get the MAC address of the device.
  * @param mac The MAC address of the device.
  * @return No return value (VOID).
  */
-VOID ble_mac_get(UINT8 *mac);
+vl_status_t vl_ble_mac_get(UINT8 *mac);
 
 /**
  * @brief Generate a random number.
  * @param (VOID).
  * @return The random number.
  */
-UINT32 ble_generate_random_number(VOID);
+UINT32 vl_ble_generate_randNum(VOID);
 
 #endif

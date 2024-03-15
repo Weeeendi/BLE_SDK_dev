@@ -20,7 +20,7 @@
 #ifdef __cplusplus
   extern "C" {
 #endif
-#include "type.h"
+#include <stdint.h>
 
 #define EXIT_SUCCESS 			0
 #define EXIT_FAILURE 			1

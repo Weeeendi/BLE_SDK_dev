@@ -1,15 +1,15 @@
 /*
  ---------------------------------------------------------------------------
- Copyright (c) 2016, ������о�Ƽ����޹�˾, All rights reserved.
- ˵���� AES�����㷨��ECBģʽ��PKCS#7
- ���ߣ� ethan@senthink.com
- ʱ�䣺 2016/04/25
+ Copyright (c) 2016, All rights reserved.
+ AES encryption algorithm implementation using ECB mode and PKCS#7 padding
+ Author: ethan@senthink.com
+ Date: 2016/04/25
  ---------------------------------------------------------------------------
  */
 
 #include "aes.h"
 
- /* ���Ӳ�������и��õ�memcpy�����������ﶨ�� */
+// Check if memcpy is available and include string.h if needed
 #if 1
 #  define HAVE_MEMCPY
 #  include <string.h>
@@ -20,20 +20,20 @@
 #endif
 
 
-//#include <stdlib.h>
+// Include stdlib.h for memory allocation functions (if needed)
 #include "stdlib.h"
 
-/* ���Ӳ������֧��32λ�޷��������������ﶨ�� */
+// Define if uint_32t is available
 #if 0
 #  define HAVE_UINT_32T
 #endif
 
-/* �궨���Ƿ�ʹ�ò���ķ�ʽ */
+// Define if we want to use lookup tables for encryption/decryption
 #if 1
 #  define USE_TABLES
 #endif
 
-/* ����汾��VERSION_1��ĳЩ���������ܱȽϺã���Ҫ���ݾ��廷������������ */
+// Define if we want to use version 1 of the algorithm
 #if 0
 #  define VERSION_1
 #endif
@@ -467,7 +467,17 @@ static void inv_shift_sub_rows( uint8_t st[N_BLOCK] )
   dt[11] = is_box(gfm_b(st[12]) ^ gfm_d(st[13]) ^ gfm_9(st[14]) ^ gfm_e(st[15]));
   }
 
-/*  ����key��ʼ���� */
+/**
+ * AES key scheduling function
+ *
+ * Initializes the AES context with a given key for encryption or decryption.
+ *
+ * @param key Pointer to the input key, which can be 16, 24, or 32 bytes long (corresponding to 128, 192, or 256-bit keys).
+ * @param keylen Length of the input key in bytes (16, 24, or 32).
+ * @param ctx Pointer to an AES context structure that will store the expanded key schedule.
+ * @return Returns 0 if successful; otherwise, returns 1 if the key length is invalid.
+ *
+ **/
 
 uint8_t aes_set_key( const unsigned char key[], uint8_t keylen, aes_context ctx[1] )
 {
@@ -518,8 +528,16 @@ uint8_t aes_set_key( const unsigned char key[], uint8_t keylen, aes_context ctx[
   return 0;
 }
 
-
-/*  ֻ����16�ֽڵ�block */
+/**
+ * AES encryption function
+ *
+ * Encrypts the input plaintext block with the AES algorithm to generate a ciphertext block.
+ *
+ * @param in Input plaintext block, length is N_BLOCK bytes.
+ * @param out Output ciphertext block, length is N_BLOCK bytes.
+ * @param ctx AES context containing the expanded key required for encryption.
+ * @return Returns 0 if encryption succeeds. If the context is invalid (i.e., rnd is 0), returns 1.
+ */
 
 uint8_t aes_encrypt( const unsigned char in[N_BLOCK], unsigned char  out[N_BLOCK], const aes_context ctx[1] )
 {
@@ -548,13 +566,32 @@ uint8_t aes_encrypt( const unsigned char in[N_BLOCK], unsigned char  out[N_BLOCK
   return 0;
 }
 
-/* ������ܺ����ݵĳ��� */
+/**
+ * Compute output length with padding
+ *
+ * Calculates the total padded length required for a given input length to be compatible with AES block size (N_BLOCK).
+ *
+ * @param in_len Length of the input data in bytes.
+ * @return The total length of the padded output data, which is always a multiple of N_BLOCK. If the input length is already a multiple of N_BLOCK, an additional block of padding will be added.
+ *
+ */
 int compute_out_length(int in_len) {
   int padding = in_len & (N_BLOCK - 1);
   return padding ? N_BLOCK + in_len - padding : N_BLOCK + in_len;
 }
 
-/* pkcs#7��� */
+/**
+ * PKCS7 padding function
+ *
+ * Adds PKCS7 padding to the end of the input data to reach the desired output length.
+ *
+ * @param in Pointer to the input buffer containing the data to be padded.
+ * @param out Pointer to the output buffer where the padded data will be stored.
+ * @param in_len Length of the input data in bytes.
+ * @param out_len Desired length of the output data in bytes, which must be greater than or equal to `in_len`.
+ *
+ * This function copies the input data to the output buffer and then appends PKCS7 padding. The value of each padding byte is set to the number of padding bytes added.
+ */
 void pkcs7_padding(const unsigned char *in, unsigned char *out, int in_len, int out_len) {
   uint8_t padding = out_len - in_len;
   uint8_t i = 0;
@@ -566,7 +603,18 @@ void pkcs7_padding(const unsigned char *in, unsigned char *out, int in_len, int 
   }
 }
 
-/* Zeropadding��� */
+/**
+ * Zero-padding function
+ *
+ * Adds zero padding to the end of the input data to reach the desired output length.
+ *
+ * @param in Pointer to the input buffer containing the data to be padded.
+ * @param out Pointer to the output buffer where the padded data will be stored.
+ * @param in_len Length of the input data in bytes.
+ * @param out_len Desired length of the output data in bytes, which must be greater than or equal to `in_len`.
+ *
+ * This function copies the input data to the output buffer and then fills the remaining space with zeros until the output length is reached.
+ */
 void Zeropadding(const unsigned char *in, unsigned char *out, int in_len, int out_len) {
   uint8_t padding = out_len - in_len;
   uint8_t i = 0;
@@ -592,7 +640,18 @@ int aes_ecb_pkcs7_encrypt( const uint8_t *in, uint8_t *out, unsigned int inlen, 
 	pkcs7_padding( in, out, inlen, outlen );
 	return(aes_ecb_encrypt( out, out, outlen, ctx ) );
 }
-/* ecbģʽ���� */
+
+/**
+ * AES Electronic Codebook (ECB) encryption function
+ *
+ * Encrypts the input data in ECB mode using the given AES context. The length of the input and output should be a multiple of the block size (N_BLOCK).
+ *
+ * @param in Pointer to the input plaintext buffer.
+ * @param out Pointer to the output ciphertext buffer.
+ * @param len Length of the input plaintext in bytes, which must be divisible by N_BLOCK.
+ * @param ctx Pointer to the AES context containing the expanded key for encryption.
+ * @return EXIT_SUCCESS if the encryption is successful; otherwise, EXIT_FAILURE.
+ */
 uint8_t aes_ecb_encrypt(const unsigned char *in, unsigned char *out, int len, const aes_context ctx[1]) {
   int i = 0;
   uint8_t tmp[N_BLOCK];
@@ -611,7 +670,7 @@ uint8_t aes_ecb_encrypt(const unsigned char *in, unsigned char *out, int len, co
 }
 
 
-/*  ����16�ֽڿ�Ľ��� */
+/*  ����16�ֽڿ�Ľ���? */
 
 uint8_t aes_decrypt( const unsigned char in[N_BLOCK], unsigned char out[N_BLOCK], const aes_context ctx[1] )
 {
@@ -639,22 +698,7 @@ uint8_t aes_decrypt( const unsigned char in[N_BLOCK], unsigned char out[N_BLOCK]
     return 1;
   return 0;
 }
-#if 0
-/* ecbģʽ����,���ܺ��������padding  */
-uint8_t aes_ecb_decrypt(const unsigned char *in, unsigned char *out, int in_len, const aes_context ctx[1]) {
-  int i = 0;
-  while(i < in_len) {
-    if (aes_decrypt(in, out, ctx) != EXIT_SUCCESS) {
-      return EXIT_FAILURE;
-    }
-    in += N_BLOCK;
-    out += N_BLOCK;
-    i += N_BLOCK;
-  }
 
-  return EXIT_SUCCESS;
-}
-#endif
 int aes_block_decrypt( const uint8_t in[N_BLOCK], uint8_t out[N_BLOCK], const aes_context ctx[1] )
 {
 	if ( ctx->rnd )
@@ -676,6 +720,7 @@ int aes_block_decrypt( const uint8_t in[N_BLOCK], uint8_t out[N_BLOCK], const ae
 	}
 	return(-1);
 }
+
 int aes_ecb_decrypt( const uint8_t *in, uint8_t *out, unsigned int inlen, const aes_context ctx[1] )
 {
 	int	i	= 0;

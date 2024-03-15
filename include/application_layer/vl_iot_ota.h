@@ -13,7 +13,7 @@
 #ifndef VL_BLE_OTA_H_
 #define VL_BLE_OTA_H_
 
-#include "vl_protocal.h"
+#include "vl_iot_protocal.h"
 #include "vl_queue.h"
 #include "vl_type.h"
 
@@ -26,20 +26,24 @@
 
 #define OTA_VER 0x01
 #define EXFLASH_PAGE_SIZE 0x1000
-#define FLASH_PAGE_SIZE 0x1000
 #define MAX_MCU_FIRMWARE_SIZE 0x32000     
-#define OTA_OVERTIME_LEN                 (10*1000)    //10s, is over 10s, then quit OTA state
+#define OTA_OVERTIME_LEN                 (10*1000)    //over 10s, then quit OTA state
+
+
+#if USE_EX_STORAGE //If using flash on chip,need redefine the flash address
 
 //SECURE OTA FLAG ADDRDESS
 #define SEC_IMAGE_OAD_HEADER_APP_FADDR       (0x01000)  /* Boot Reading area address,You can configure it by your own device platfrom*/
 #define SEC_IMAGE_OAD_HEADER_RESUME_FADDR	 (0x02000)  /* Break resume area address,You can configure it by your own device platfrom*/
-#define SEC_IMAGE_OAD_HEADER_APP_RUNNING     (0x0E000)  /* Application running area address,You can configure it by your own device platfrom*/
-
-#if USE_EX_STORAGE
 //SECURE OTA IMG ADDRDESS EX
 #define SEC_EX_BACKUP_OAD_HEADER_FADDR		     (0x10000)  /* Backup image area address start,You can configure it by your own device platfrom*/
 #define SEC_EX_BACKUP_ALLOC_END_FADDR		     (0x68000)  /* Backup image area address end,You can configure it by your own device platfrom*/
+
 #else
+
+//SECURE OTA FLAG ADDRDESS
+#define SEC_IMAGE_OAD_HEADER_APP_FADDR       (0xFFFFF)  /* Boot Reading area address,You can configure it by your own device platfrom*/
+#define SEC_IMAGE_OAD_HEADER_RESUME_FADDR	 (0xFFFFF)  /* Break resume area address,You can configure it by your own device platfrom*/
 //SECURE OTA IMG ADDRDESS,if use this Need to synchronize adjust SEC_IMAGE_OAD_HEADER_APP_RUNNING
 #define SEC_BACKUP_OAD_HEADER_FADDR		     (0xE000)  /* Backup image area address start,You can configure it by your own device platfrom*/
 #define SEC_BACKUP_ALLOC_END_FADDR		     (0x38000)  /* Backup image area address end,You can configure it by your own device platfrom*/

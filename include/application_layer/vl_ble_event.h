@@ -13,8 +13,26 @@
 #define VL_BLE_EVENT_H
 
 #include "vl_log.h"
-#include "vl_config.h"
+#include "vl_ble_config.h"
+#include "vl_queue.h"
 
-const unsigned char OVERTIME = 30;
+#pragma pack (1)
+typedef struct {
+    UINT8 len; //当前数组已使用数据的长度 
+    UINT8 curbuf[BLE_BUF_LMT]; //当前数组
+}BLE_BUFF_T;
+#pragma pack ()
+
+/* queue handler */
+
+extern vl_queue_t xQueue_BLERecv;
+extern vl_queue_t xQueue_BLESend;
+
+/*variable*/
+
+extern BLE_BUFF_T BLE_Send;
+extern BLE_BUFF_T BLE_Rev;
+
+extern ble_status_s vl_ble_connect_status_get(VOID);
 
 #endif

@@ -152,6 +152,7 @@ typedef enum
     BLE_STATUS_INIT,
     BLE_STATUS_START_ADV,
     BLE_STATUS_STOP_ADV,
+    BLE_STATUS_CHG_ADV,
     BLE_STATUS_CONNECT,
     BLE_STATUS_DISCONNECT,
     BLE_STATUS_UNKNOW,
@@ -195,9 +196,10 @@ typedef struct vl_ble_type
     UINT8 adv_state;        // 0: not advertising, 1: advertising
     ble_status_s connect_state;    // @ref BLE_STATUS_S
     UINT8 bound_flag;       // 0: not bound, 1: bounded
-    UINT8 MAC_Addr[6];      
+    UINT8 test_flag;        // 0: not test, 1: test mode
+    UINT8 MAC_Addr[6];
     /* data */
-}vl_ble_type_t;
+}vl_ble_obj_t;
 
 typedef struct vl_iot_type
 {
@@ -208,7 +210,7 @@ typedef struct vl_iot_type
     UINT8 authVerifed_flag;
     iot_conn_status_s conn_state;
     /* data */
-}vl_iot_type_t;
+}vl_iot_obj_t;
 
 
 #endif

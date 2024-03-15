@@ -67,6 +67,15 @@
     "vl_log_port.h": "c",
     "vl_log.h": "c",
     "vl_flash_port.h": "c",
-    "vl_ex_flash_port.h": "c"
+    "vl_ex_flash_port.h": "c",
+    "vl_ble_queue_send.h": "c",
+    "vl_queue.h": "c",
+    "vl_ble_event.h": "c",
+    "vl_iot_ota.h": "c",
+    "vl_ble_handle.h": "c",
+    "vl_ble_config.h": "c",
+    "aes.h": "c",
+    "vl_iot_protocal.h": "c",
+    "vl_iot_handle.h": "c"
   }
 }

@@ -14,6 +14,16 @@
 #include "vl_ble_handle.h"
 #include "vl_ble_productTest.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 void main(void){
 
+
 }
+
+#ifdef __cplusplus
+}
+#endif

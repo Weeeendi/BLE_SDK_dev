@@ -12,6 +12,8 @@
 
 #include "vl_iot_ota.h"
 #include "vl_log.h"
+#include "vl_iot_protocal.h"
+#include "vl_ble_event.h"
 
 #include "crc32.h"
 
@@ -24,6 +26,14 @@
 
 #define DFU_TEMP_BUFFER_SIZE         SECTOR_SIZE
 #define SUPPORT_BREAK_RESUME         0   /*support break resume*/
+
+#if USE_EX_STORAGE
+#define WRITE_FLASH_PORT              vl_ex_flash_write
+#define READ_FLASH_PORT               vl_ex_flash_read
+#else
+#define WRITE_FLASH_PORT              vl_nv_flash_write
+#define READ_FLASH_PORT               vl_nv_flash_read
+#endif
 
 /*QUEUE*/
 vl_queue_t xQueue_OTA;
@@ -69,18 +79,46 @@ vl_status_t resume_Breakpoint_read(ota_img_t* ota_img){
     return ret;
 }
 
-vl_status_t vl_handle_ota_req(uint16_t cmd,uint8_t*recv_data,uint32_t recv_len){
-
+/**
+ * @brief  This function can obtain local version of requested ota device
+ * @param  uint8_t  type - which device need to ota  @ref yj_ota_type_t
+ *
+*/
+uint32_t get_versionNumber(uint8_t type){
+    uint32_t version;
+    switch (type)
+    {
+    case IoT_BLE:
+        version = IOT_MCU_SOFTVER;
+        break;
+    case IoT_MCU:
+        break;
+    case IoT_4G:
+        break;
+    case Ebike_Dashboard:
+        break;
+    case Ebike_Mcu:
+        break;
+    case Ebike_BMS:
+        break;
+    case Ebike_Ex1:
+        break;
+    case Ebike_Ex2:
+        break;
+    default:
+        VL_LOG_ERROR(TAG,"OTA type error %d \r\n",type);
+        break;
+    }
+    return version;
 }
 
-uint32_t yj_ota_init(void)
+
+vl_status_t vl_ota_init(void)
 {
     iot_work_status_set(UPDATE_MODE);
     memset(&dfu_settings,'\0',sizeof(dfu_settings_t));
-    dfu_settings.ota_status = VL_OTA_STATUS_NONE;
-    
     OTA_OVERTIME_PARAM = xTaskGetTickCount();
-    return 0;
+    return VL_SUCCESS;
 }
 
 uint32_t transfer_ver2int(char* ver,uint8_t len){
@@ -97,6 +135,45 @@ uint32_t transfer_ver2int(char* ver,uint8_t len){
         offset -= 8;
     }
     return ver_int;
+}
+
+
+static uint8_t vl_ota_start_req(uint8_t*recv_data,uint32_t recv_len)
+{
+    uint8_t p_buf[20];
+    uint8_t payload_len = 0;
+    uint32_t current_version = 0;
+    uint8_t index = DATA_START;
+    uint8_t ret = 0;
+  
+    dfu_settings.file_info.firmware_file_type = recv_data[0];
+
+    current_version = get_versionNumber(dfu_settings.file_info.firmware_file_type);
+    
+    if(dfu_settings.ota_status!=VL_OTA_STATUS_NONE)
+    {
+        VL_LOG_ERROR(TAG,"current ota status is not TUYA_OTA_STATUS_NONE  and is : %d !",dfu_settings.ota_status);
+        ret = 1;
+    }
+ 
+    dfu_settings.packet_size = BLE_MAX_PACKET_SIZE;
+
+    p_buf[payload_len++] = ret;   
+    p_buf[payload_len++] = OTA_VER;
+    p_buf[payload_len++] = dfu_settings.file_info.firmware_file_type;
+    p_buf[payload_len++] = current_version>>24;
+    p_buf[payload_len++] = current_version>>16;
+    p_buf[payload_len++] = current_version>>8;
+    p_buf[payload_len++] = current_version;
+    p_buf[payload_len++] = dfu_settings.packet_size>>8;
+    p_buf[payload_len++] = (dfu_settings.packet_size & 0xFF);
+    dfu_settings.ota_status = VL_OTA_STATUS_START;
+    //payload_len = 9;
+
+	memcpy((uint8_t*)&BLE_Send.curbuf[index],&p_buf,payload_len);
+	bt_uart_write_frame(VL_BLE_EVT_OTA_START,payload_len);
+
+    return ret;
 }
 
 
@@ -117,25 +194,39 @@ uint32_t cal_local_storageCrc(void){
     last_packageData = length % EXFLASH_PAGE_SIZE;
     for(;i<page_num;i++){
         memset(fblock,0x00,EXFLASH_PAGE_SIZE);
-
-#if USE_EX_STORAGE
-        vl_ex_flash_write(SEC_EX_BACKUP_OAD_HEADER_FADDR+i*EXFLASH_PAGE_SIZE,fblock,EXFLASH_PAGE_SIZE);
-#else
-        vl_nv_flash_write(SEC_IMAGE_OAD_HEADER_APP_FADDR+i*EXFLASH_PAGE_SIZE,EXFLASH_PAGE_SIZE,fblock);
-#endif
+        WRITE_FLASH_PORT(SEC_EX_BACKUP_OAD_HEADER_FADDR+i*EXFLASH_PAGE_SIZE,fblock,EXFLASH_PAGE_SIZE);
         crc32 = CRC32_HaveInitVal(crc32,fblock,EXFLASH_PAGE_SIZE);
-        //crc16_ForCan = CalcCRC16_HaveInit(crc16_ForCan,fblock,EXFLASH_PAGE_SIZE);
     }
     if(last_packageData > 0){
         memset(fblock,0x00,last_packageData);
-#if USE_EX_STORAGE
-        vl_ex_flash_write(SEC_EX_BACKUP_OAD_HEADER_FADDR+i*EXFLASH_PAGE_SIZE,fblock,last_packageData);
-#else
-        W25QXX_Read(SEC_BACKUP_OAD_HEADER_FADDR+i*EXFLASH_PAGE_SIZE,last_packageData,fblock);
-#endif
+        WRITE_FLASH_PORT(SEC_EX_BACKUP_OAD_HEADER_FADDR+i*EXFLASH_PAGE_SIZE,fblock,last_packageData);
         crc32 = CRC32_HaveInitVal(crc32,fblock,last_packageData);
-        //crc16_ForCan = CalcCRC16_HaveInit(crc16_ForCan,fblock,last_packageData);
     }
     free(fblock);
     return crc32;
+}
+
+
+
+vl_status_t vl_handle_ota_req(uint16_t cmd,uint8_t*recv_data,uint32_t recv_len){
+    if(recv_data == NULL || recv_len == 0){
+        return VL_BLE_ERR_INVALID_PARAM;
+    }
+
+    switch (cmd)
+    {
+    case VL_EVT_OTA_START:
+        break;
+    case VL_EVT_OTA_FILEINFO:
+        break;
+    case VL_EVT_OTA_OFFSETREQ:
+        break;
+    case VL_EVT_OTA_DATA:
+        break;
+    case VL_EVT_OTA_OVER:
+        break;
+    
+    default:
+        break;
+    }
 }

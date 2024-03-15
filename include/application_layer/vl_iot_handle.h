@@ -23,7 +23,7 @@ extern "C" {
  * @brief  iot struct
  * 
  */
-vl_iot_type_t vl_iot_obj;
+vl_iot_obj_t vl_iot_obj;
 
 
 /**
