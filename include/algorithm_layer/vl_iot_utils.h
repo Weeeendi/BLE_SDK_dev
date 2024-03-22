@@ -22,6 +22,8 @@ VOID tal_xor_str(UINT8 *str,const UINT8 xor_c,UINT8 strLen);
 UINT32 tal_util_str_int2intstr(UINT8 num, UINT8* intStr, UINT32 size);
 UINT32 tal_util_str_intstr2int(UINT8* intStr, UINT32 size, UINT32* num);
 INT32 tal_util_str_hexstr2int(UINT8* hexStr, UINT8 size);
+UINT32 tal_util_hex2hexstr(UINT8 *hex, UINT8* hex_string, UINT16 size);
 INT8  tal_datacmp(const UINT8* data1,const UINT8* data2,UINT16 cmpLen);
+INT8 tal_check_sum(INT8 *pbuf,INT16 len);
 
 #endif

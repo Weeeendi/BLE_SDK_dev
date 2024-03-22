@@ -137,13 +137,14 @@ typedef void (*FunctionPointer)(void);  // Function pointer type
 #define PRODUCTID_LEN 10
 #define DEVICEID_LEN 16
 #define RANDOMNUM_LEN 4
+#define AES_SESSION_KEY_LENGTH 16
 
 typedef enum
 {
-    NO_CONNECT_NO_BOUND,
-    CONNECT_NO_BOUND,
+    DISCONNECT_UNBOUND,
+    CONNECT_UNBOUND,
     CONNECT_BOUND,
-    NO_CONNECT_BOUND,
+    DISCONNECT_BOUND,
     UNKNOW_STATE,
 } iot_conn_status_s;
 
@@ -158,6 +159,13 @@ typedef enum
     BLE_STATUS_UNKNOW,
 } ble_status_s;
 
+typedef enum{
+    NORMAL_MODE,
+    FACTORY_MODE,
+    UPDATE_MODE,
+    LOWERPOWER_MODE,
+    UNKNOW_MODE,
+} iot_work_mode_s;
 
 typedef enum {
     VL_SUCCESS  = 0x00,
@@ -190,27 +198,77 @@ typedef enum {
 
 } vl_status_t;
 
+
+/******BLE PARAMETERS*********************************************/
+#define BLE_ADV_DATA_LEN       30
+#define BLE_ADV_RSCAN_LEN      30
+#define BLE_ADV_NAME_LEN       BLE_ADV_RSCAN_LEN
+
+#define BLE_SERVICE_USED        1       //Number of Services used
+#define BLE_CHARACTER_USED      2       //Number of Characters used
+
+/** @defgroup GATT_PROP_BITMAPS_DEFINES GATT Attribute Access Permissions Bit Fields
+ * @{
+ */
+#define GATT_PROP_BROADCAST             (1<<0)  //!< Attribute is able to broadcast
+#define GATT_PROP_READ                  (1<<1)  //!< Attribute is Readable
+#define GATT_PROP_WRITE_CMD             (1<<2)  //!< Attribute supports write with no response
+#define GATT_PROP_WRITE_REQ             (1<<3)  //!< Attribute supports write request
+#define GATT_PROP_NOTI                  (1<<4)  //!< Attribute is able to send notification
+#define GATT_PROP_INDI                  (1<<5)  //!< Attribute is able to send indication
+#define GATT_PROP_AUTH_SIG_WRTIE        (1<<6)  //!< Attribute supports authenticated signed write
+#define GATT_PROP_EXTEND_PROP           (1<<7)  //!< Attribute supports extended properities
+#define GATT_PROP_WRITE                 (1<<8)  //!< Attribute is Writable (support both write_req and write_cmd)
+#define GATT_PROP_AUTHEN                (1<<9)  //!< Attribute requires Authentication
+
+/**
+ * @brief BLE Service parameter configuration
+ */
+typedef struct bt_svc_param_t
+{
+    uint8_t svc_uuid[16];  /// 128 bits UUID
+
+    struct bt_character{
+        uint16_t uuid[16];  //128bit UUID
+        uint16_t permission;//reference to @ref GATT_PROP_BITMAPS_DEFINES
+    }character[BLE_CHARACTER_USED];
+}bt_svc_param;
+
+// Define a structure to store Bluetooth device attributes parameters
+typedef struct{
+    uint8_t device_name[BLE_ADV_NAME_LEN];        // Bluetooth device name, at least 4 characters are valid. If all 0x00 or an invalid name, the default device name will be used
+    uint8_t adv_data[BLE_ADV_DATA_LEN];           // Advertising data, with an actual effective length of 30 bytes
+    uint8_t adv_data_len;           // Length of advertising data
+    uint8_t scan_rsp_data[BLE_ADV_RSCAN_LEN];      // Scan response data, with an actual effective length of 30 bytes
+    uint8_t scan_rsp_data_len;      // Length of scan response data
+    uint8_t device_addr[6];         // Device MAC address
+
+    // Services included in the advertising data
+    bt_svc_param service[BLE_SERVICE_USED];
+}vl_ble_attr_param_t;
+
+/******BLE PARAMETERS**************************************************/
+
 typedef struct vl_ble_type
 {
     FunctionPointer callback; 
-    UINT8 adv_state;        // 0: not advertising, 1: advertising
-    ble_status_s connect_state;    // @ref BLE_STATUS_S
-    UINT8 bound_flag;       // 0: not bound, 1: bounded
-    UINT8 test_flag;        // 0: not test, 1: test mode
-    UINT8 MAC_Addr[6];
-    /* data */
+    volatile ble_status_s connect_state;    // @ref BLE_STATUS_S
+    volatile uint8_t current_mtu;
+    BOOL test_flag;        // 0: not test, 1: test mode
+    UINT8 mac[6];
 }vl_ble_obj_t;
 
 typedef struct vl_iot_type
 {
     UINT8 productID[PRODUCTID_LEN];
     UINT8 deviceID[DEVICEID_LEN];
-    UINT8 randomNum[RANDOMNUM_LEN];
-    UINT8 randomNumVerified_flag;
-    UINT8 authVerifed_flag;
-    iot_conn_status_s conn_state;
-    /* data */
+    UINT8 random_num[RANDOMNUM_LEN];
+    BOOL random_num_valid;
+    UINT8 aes128Key[AES_SESSION_KEY_LENGTH];
+    BOOL authVerifed_flag;
+    volatile iot_conn_status_s conn_state;
+    volatile iot_work_mode_s work_mode;
+    volatile BOOL bound_flag;    // 0: not bound, 1: bounded
 }vl_iot_obj_t;
-
 
 #endif

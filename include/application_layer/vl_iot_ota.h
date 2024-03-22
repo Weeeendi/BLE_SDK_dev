@@ -20,8 +20,16 @@
               
 /* OTA Configure */
 
-#ifndef USE_EX_STORAGE
+#ifndef USE_EX_STORAGE                  //If using external flash
 #define USE_EX_STORAGE  1
+#endif
+
+#ifndef SUPPORT_BREAK_RESUME             //support break resume
+#define SUPPORT_BREAK_RESUME 0
+#endif
+
+#ifndef SUPPORT_PARTTHIRD_OTA         //support third party device OTA
+#define SUPPORT_PARTTHIRD_OTA 0
 #endif
 
 #define OTA_VER 0x01
@@ -36,8 +44,8 @@
 #define SEC_IMAGE_OAD_HEADER_APP_FADDR       (0x01000)  /* Boot Reading area address,You can configure it by your own device platfrom*/
 #define SEC_IMAGE_OAD_HEADER_RESUME_FADDR	 (0x02000)  /* Break resume area address,You can configure it by your own device platfrom*/
 //SECURE OTA IMG ADDRDESS EX
-#define SEC_EX_BACKUP_OAD_HEADER_FADDR		     (0x10000)  /* Backup image area address start,You can configure it by your own device platfrom*/
-#define SEC_EX_BACKUP_ALLOC_END_FADDR		     (0x68000)  /* Backup image area address end,You can configure it by your own device platfrom*/
+#define SEC_BACKUP_OAD_HEADER_FADDR		     (0x10000)  /* Backup image area address start,You can configure it by your own device platfrom*/
+#define SEC_BACKUP_ALLOC_END_FADDR		     (0x68000)  /* Backup image area address end,You can configure it by your own device platfrom*/
 
 #else
 
@@ -82,40 +90,40 @@ typedef enum{
  **********************************************************************/
 #pragma pack (4)
 typedef struct{
-	uint8_t OTA_Plan;//0x00 没有升级计划 01有升级计划
-	uint32_t Target_SoftSize;//下载固件的大小
-	uint32_t Target_StartAddr;//当前下载固件的起始地址
-    uint32_t crc32;     //当前下载固件的crc32
-	uint32_t Flash_Addr;//当前下载固件在flash中的起始地址
+	UINT8 OTA_Plan;//0x00 no need updata 01 need updata 
+	UINT32 Target_SoftSize;//Download firmware size
+	UINT32 Target_StartAddr;//Download firmware addr
+    UINT32 crc32;     //Download firmware crc32
+	UINT32 Flash_Addr;//Download firmware start on flash
 } OTA_Info_t;
 #pragma pack()
 
 
 typedef struct
 {
-    uint32_t firmware_file_version;
-    uint32_t firmware_file_length;
-    uint32_t firmware_file_crc;
-    uint8_t  firmware_file_type;
+    UINT32 firmware_file_version;
+    UINT32 firmware_file_length;
+    UINT32 firmware_file_crc;
+    UINT8  firmware_file_type;
 } firmware_file_info_t;
 
 typedef struct
 {
-    uint32_t firmware_image_offset_last;
-    uint32_t firmware_image_crc_last;
+    UINT32 firmware_image_offset_last;
+    UINT32 firmware_image_crc_last;
 } firmware_progress_t;
 
 typedef struct
 {
     firmware_file_info_t file_info;
     firmware_progress_t progress;
-    uint16_t packet_size;
-    uint16_t comm_type;
-    uint16_t current_package;
-    uint16_t last_package;
-    uint16_t total_package;
-    uint8_t  ota_status;
-    uint8_t pid[PRODUCTID_LEN];    
+    UINT16 packet_size;
+    UINT16 comm_type;
+    UINT16 current_package;
+    UINT16 last_package;
+    UINT16 total_package;
+    UINT8  ota_status;
+    UINT8 pid[PRODUCTID_LEN];    
 } dfu_settings_t;
 
 
@@ -123,78 +131,77 @@ typedef struct
 
 typedef struct
 {
-  uint8_t type;
-  uint8_t datalen;
-  uint8_t* data;
+  UINT8 type;
+  UINT8 datalen;
+  UINT8* data;
 }ota_data_t;
 
 typedef struct {
-    uint8_t  flag;
-    uint8_t  ota_version;
-    uint8_t  type;
-    uint32_t version;
-    uint16_t package_maxlen;
+    UINT8  flag;
+    UINT8  ota_version;
+    UINT8  type;
+    UINT32 version;
+    UINT16 package_maxlen;
 } vl_ble_ota_req_rsp_t;
 
 typedef struct {
-    uint8_t  type;
-    uint8_t  pid[8];
-    uint32_t version;
-    uint32_t file_len;
-    uint32_t crc32;
+    UINT8  type;
+    UINT8  pid[8];
+    UINT32 version;
+    UINT32 file_len;
+    UINT32 crc32;
 } vl_ble_ota_file_info_t;
 
 typedef struct {
-    uint8_t  type;
-    uint8_t  state;
-    uint32_t old_file_len;
-    uint32_t old_crc32;
+    UINT8  type;
+    UINT8  state;
+    UINT32 old_file_len;
+    UINT32 old_crc32;
 } vl_ble_ota_file_info_rsp_t;
 
 typedef struct {
-    uint8_t  type;
-    uint32_t offset;
+    UINT8  type;
+    UINT32 offset;
 } vl_ble_ota_file_offset_t;
 
 typedef struct {
-    uint8_t  type;
-    uint32_t offset;
+    UINT8  type;
+    UINT32 offset;
 } vl_ble_ota_file_offset_rsp_t;
 
 typedef struct {
-    uint8_t  type;
-    uint16_t pkg_id;
-    uint16_t len;
-    uint16_t crc16;
-    uint8_t  data[];
+    UINT8  type;
+    UINT16 pkg_id;
+    UINT16 len;
+    UINT16 crc16;
+    UINT8  data[];
 } vl_ble_app_ota_data_t;
 
 typedef struct {
-    uint8_t type;
-    uint8_t state;
+    UINT8 type;
+    UINT8 state;
 } vl_ble_ota_data_rsp_t;
 
 typedef struct {
-    uint8_t type;
-    uint8_t state;
+    UINT8 type;
+    UINT8 state;
 } vl_ble_ota_end_rsp_t;
 
 
 typedef struct{
-  uint8_t  ota_resume_transfer_flag; 
-  uint8_t  ota_comm_type;
-  uint32_t ota_file_size;
-  uint16_t ota_offset_last;
-  uint32_t ota_crc32_last;
-  uint32_t ota_file_crc32;
-  uint16_t ota_crc16;
+  UINT8  ota_resume_transfer_flag; 
+  UINT8  ota_comm_type;
+  UINT32 ota_file_size;
+  UINT16 ota_offset_last;
+  UINT32 ota_crc32_last;
+  UINT32 ota_file_crc32;
+  UINT16 ota_crc16;
 }ota_img_t;
 #pragma pack()
 
 
-extern vl_status_t vl_handle_ota_req(uint16_t cmd,uint8_t*recv_data,uint32_t recv_len);
-
-extern uint32_t OTA_OVERTIME_PARAM;
-extern vl_queue_t xQueue_OTA;
+extern vl_status_t vl_handle_ota_req(UINT16 cmd,UINT8*recv_data,UINT32 recv_len);
+extern vl_status_t vl_ota_updata_otherDev(UINT8 percent);
+extern UINT32 OTA_OVERTIME_PARAM;
 
 #endif /* !VL_BLE_OTA_H_ */

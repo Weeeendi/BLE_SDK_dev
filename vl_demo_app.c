@@ -18,6 +18,10 @@
 extern "C" {
 #endif
 
+vl_status_t ble_dp_query(uint8_t *data, uint16_t data_len){
+    //TODO:You need redefine it by yourself
+}
+
 
 void main(void){
 

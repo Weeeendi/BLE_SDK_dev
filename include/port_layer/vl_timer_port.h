@@ -18,11 +18,19 @@ extern "C" {
 #endif
 
 
+typedef enum{
+    VL_TIMER_ONCE = 0,
+    VL_TIMER_REPEAT = 1,
+}vl_timer_mode;
+
+
+typedef void *vl_ble_timer_t;
+
 /**
  * @brief Initialize SDK timer module
  * 
  */
-void vl_timer_init(void);
+vl_status_t vl_timer_init(void);
 
 /**
  * Creates a timer with a callback function.
@@ -34,9 +42,9 @@ void vl_timer_init(void);
  * @param timeout The time interval (in units as milliseconds, depending on implementation) before the timer triggers its callback function.
  * @param repeat  If set to TRUE, the timer will repeatedly execute; otherwise, it executes only once.
  * @param callback A pointer to the callback function that will be invoked when the timer expires.
- * @return No return value (void).
+ * @return vl_status_t.
  */
-void vl_timer_creat(UINT8 timer_id, UINT16 timeout, BOOL repeat, FunctionPointer callback);
+vl_status_t vl_timer_creat(UINT8 timer_id, UINT16 timeout, BOOL repeat, FunctionPointer callback);
 
 /**
  * Starts a timer.
@@ -46,9 +54,9 @@ void vl_timer_creat(UINT8 timer_id, UINT16 timeout, BOOL repeat, FunctionPointer
  * its predefined timeout duration.
  *
  * @param timer_id This ID must correspond to a previously created timer.
- * @return No return value (void).
+ * @return vl_status_t.
  */
-void vl_timer_start(UINT8 timer_id);
+vl_status_t vl_timer_start(UINT8 timer_id);
 
 /**
  * Stop a timer.
@@ -57,21 +65,9 @@ void vl_timer_start(UINT8 timer_id);
  * The timer will stop running.
  *
  * @param timer_id This ID must correspond to a previously created timer.
- * @return No return value (void).
+ * @return vl_status_t.
  */
-void vl_timer_stop(UINT8 timer_id);
-
-
-/**
- * Clear a timer.
- *
- * This function clears an already created timer with the specified ID. 
- * The timer will Clear the timer ID will be available for use again.
- *
- * @param timer_id This ID must correspond to a previously created timer.
- * @return No return value (void).
- */
-void vl_timer_clear(UINT8 timer_id);
+vl_status_t vl_timer_stop(UINT8 timer_id);
 
 
 #ifdef __cplusplus

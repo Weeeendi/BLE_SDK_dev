@@ -76,6 +76,10 @@
     "vl_ble_config.h": "c",
     "aes.h": "c",
     "vl_iot_protocal.h": "c",
-    "vl_iot_handle.h": "c"
+    "vl_iot_handle.h": "c",
+    "vl_timer_port.h": "c",
+    "vl_sdk_globals.h": "c",
+    "vl_ble_stdlib.h": "c",
+    "cjson.h": "c"
   }
 }

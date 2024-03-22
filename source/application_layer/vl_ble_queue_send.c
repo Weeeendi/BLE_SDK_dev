@@ -12,6 +12,7 @@
 #include "vl_ble_queue_send.h"
 #include "vl_ble_port.h"
 #include "vl_ble_config.h"
+#include "vl_iot_handle.h"
 #include "vl_ble_event.h"
 #include "vl_queue.h"
 
@@ -35,7 +36,7 @@ vl_status_t ble_send_enqueue(PVOID in){
     return vl_enqueue(&xQueue_ble_send, in);
 }
 
-static void ble_send_queue_free(void)
+static VOID ble_send_queue_free(VOID)
 {
     BLE_BUFF_T send_p;
 	while(vl_dequeue(&xQueue_ble_send,&send_p)== VL_SUCCESS);
@@ -45,9 +46,9 @@ vl_status_t ble_send_queue_handle(VOID){
     BLE_BUFF_T send_p;
     iot_conn_status_s conn_s;
 
-    conn_s = vl_iot_connect_status_get();
+    conn_s = get_BleBoundStatus();
     while(vl_get_queue_used(&xQueue_ble_send)!= 0){
-        if (conn_s != BLE_STATUS_CONNECT)
+        if (conn_s != CONNECT_BOUND)
         {
             ble_send_queue_free();
             return VL_BLE_ERR_INVALID_STATE;

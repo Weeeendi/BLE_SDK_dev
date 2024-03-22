@@ -19,27 +19,27 @@ extern "C" {
 
 vl_log_level_t vl_log_current_level = VL_LOG_DEFAULT_LEVEL;
 
-void vl_printf(char *fmt, ...)
+VOID vl_printf(CHAR *fmt, ...)
 {
-	static uint8_t Log_data[512];
-	uint16_t Log_data_len = 0;
+	static UINT8 Log_data[512];
+	UINT16 Log_data_len = 0;
     if(get_test_flag()) return;
 
     va_list args;
     va_start(args, fmt);
-    Log_data_len = vsprintf((char *)Log_data, fmt, args);
+    Log_data_len = vsprintf((CHAR *)Log_data, fmt, args);
     va_end(args);
 	if(Log_data_len > 512){
         DBG_PRINT("DBG buffer is full!");
 		return;
     }
     
-    vl_log_write((char *)Log_data,Log_data_len);
+    vl_log_write((CHAR *)Log_data,Log_data_len);
 }
 
-void vl_printf_hexdump(uint8_t *p_data,uint16_t len)
+VOID vl_printf_hexdump(UINT8 *p_data,UINT16 len)
 {
-    for(uint16_t i = 0; i < len; i++)
+    for(UINT16 i = 0; i < len; i++)
     {
       DBPrintf("%02x ",p_data[i]);
       if((i+1)%16==0)
@@ -49,7 +49,7 @@ void vl_printf_hexdump(uint8_t *p_data,uint16_t len)
     }
 }
 
-void vl_log_change_level(vl_log_level_t level){
+VOID vl_log_change_level(vl_log_level_t level){
     if(level > VL_LOG_LEVEL_MAX) return;
     vl_log_current_level = level;
 }

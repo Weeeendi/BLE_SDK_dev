@@ -23,25 +23,9 @@ extern "C" {
  * @brief  iot struct
  * 
  */
-vl_iot_obj_t vl_iot_obj;
 
-
-/**
- * @brief Initialize the iot struct
- * 
- * @return UINT8 
- */
 UINT8 vl_iot_handle_init(VOID);
-
-
-
-
-
-
-
-
-
-
+BOOL vl_iot_boundf_read(VOID);
 
 #ifdef __cplusplus
 }

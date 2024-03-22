@@ -23,6 +23,14 @@ VOID tal_inverted_array(UINT8 *array,UINT16 length)
     }
 }
 
+/*calculate checksum*/
+UINT8 tal_check_sum(UINT8 *pbuf,UINT16 len)
+{
+    UINT32 i = 0,ck_sum = 0;
+    for(i = 0; i<len ; i++)
+        ck_sum += pbuf[i];
+    return (UINT8)ck_sum;
+}
 
 VOID tal_util_hextoasciiUpper(UINT8 *hexbuf,UINT8 len,UINT8 *ascbuf)
 {
@@ -183,6 +191,25 @@ VOID tal_xor_str(UINT8 *str,const UINT8 xor_c,UINT8 strLen){
    }
 }
 
+/**
+ * @brief convers any lenth hex to hex string
+ *  
+ * @param hex 
+ * @param hex_string hex_string's size must be double of hex
+ * @param size  hex numbers size 0-65536
+ * @return UINT32 tranfromed hex_string size
+ */
+UINT32 tal_util_hex2hexstr(UINT8 *hex, UINT8* hex_string, UINT16 size){
+    UINT16 idx = 0;
+    UINT8 rem_param = 0;
+    for(UINT8 i = 0 ;i < size;i++){
+        rem_param = hex[i];
+        hex_string[idx++] =  tal_util_str_int2hexchar(true,(rem_param>>4));
+        hex_string[idx++] =  tal_util_str_int2hexchar(true,(rem_param & 0x0f));
+    }
+    
+    return idx;
+}
 
 UINT32 tal_util_str_int2intstr(UINT8 num, UINT8* intStr, UINT32 size){
     UINT32 idx = 0;

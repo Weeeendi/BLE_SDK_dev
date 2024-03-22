@@ -14,6 +14,9 @@
 
 #include "vl_type.h"
 
+#define MAC_LEN 	  6
+#define MAC_STR_LEN   12
+
 /******************************************************************************
 							1: modify product information
 ******************************************************************************/
@@ -62,7 +65,7 @@
 #endif
 
 #ifndef vl_ble_connect_monitor_timeout_ms
-	#define vl_ble_connect_monitor_timeout_ms 3000  //30s(3000*10ms)
+	#define vl_ble_connect_monitor_timeout_ms 3000*10  //30s(3000*10ms)
 #endif
 
 

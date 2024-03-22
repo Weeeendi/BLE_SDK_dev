@@ -18,6 +18,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 /**
  * @brief Initialize SDK log module
  * 

@@ -31,7 +31,7 @@ extern "C"
  *         returns VL_BLE_ERR_INVALID_PARAM if parameters are invalid;
  *         returns VL_BLE_ERR_NO_MEM if memory allocation fails.
  */
-vl_status_t vl_queue_init(vl_queue_t *q, void *buf, uint16_t elem_size, uint8_t queue_depth)
+vl_status_t vl_queue_init(vl_queue_t *q, void *buf, UINT16 elem_size, UINT8 queue_depth)
 {
     if (elem_size == 0 || queue_depth == 0)
         return VL_BLE_ERR_INVALID_PARAM;
@@ -41,13 +41,13 @@ vl_status_t vl_queue_init(vl_queue_t *q, void *buf, uint16_t elem_size, uint8_t 
 
     q->size = queue_depth;
     q->unit_size = elem_size;
-    q->buf = (uint8_t *)malloc(queue_depth * elem_size);
+    q->buf = (UINT8 *)malloc(queue_depth * elem_size);
     if (q->buf == NULL)
     {
         free(q->buf);
         return VL_BLE_ERR_NO_MEM;
     }
-    memset(q->buf, 0, queue_depth * sizeof(uint8_t));
+    memset(q->buf, 0, queue_depth * sizeof(UINT8));
     q->rd_ptr = 0;
     q->wr_ptr = 0;
     q->used = 0;
@@ -67,7 +67,7 @@ vl_status_t vl_queue_init(vl_queue_t *q, void *buf, uint16_t elem_size, uint8_t 
  *         Returns VL_SUCCESS if the element was successfully enqueued;
  *         returns VL_BLE_ERR_NO_MEM if the queue is full.
  */
-vl_status_t vl_enqueue(vl_queue_t *q, void *in)
+vl_status_t vl_enqueue(vl_queue_t *q,PVOID in)
 {
     vl_ble_device_enter_critical();
     if (q->used == q->size * q->unit_size && q->buf != NULL)
@@ -78,7 +78,7 @@ vl_status_t vl_enqueue(vl_queue_t *q, void *in)
         return VL_BLE_ERR_NO_MEM;
     }
 
-    memcpy((uint8_t *)q->buf + q->wr_ptr, in, q->unit_size);
+    memcpy((UINT8 *)q->buf + q->wr_ptr, in, q->unit_size);
 
     q->wr_ptr = (q->wr_ptr + q->unit_size) % (q->size * q->unit_size);
     q->used += q->unit_size;
@@ -101,10 +101,10 @@ vl_status_t vl_enqueue(vl_queue_t *q, void *in)
  *         returns VL_BLE_ERR_NOT_FOUND if the queue is empty.
  *
  */
-vl_status_t vl_queue_get(vl_queue_t *q, void *out){
+vl_status_t vl_queue_get(vl_queue_t *q, PVOID out){
     if (q->used > 0 && q->buf != NULL)
     {
-        memcpy(out, (uint8_t *)q->buf + q->rd_ptr, q->unit_size);
+        memcpy(out, (UINT8 *)q->buf + q->rd_ptr, q->unit_size);
         // VL_LOG_HEXDUMP_DEBUG("Get queue:",out,q->unit_size);
         return VL_SUCCESS;
     }
@@ -126,11 +126,11 @@ vl_status_t vl_queue_get(vl_queue_t *q, void *out){
  *         returns VL_SUCCESS if a valid element was successfully dequeued;
  *         returns VL_BLE_ERR_NOT_FOUND if the queue is empty.
  */
-vl_status_t vl_dequeue(vl_queue_t *q, void *out)
+vl_status_t vl_dequeue(vl_queue_t *q,PVOID  out)
 {
     if (q->used > 0 && q->buf != NULL)
     {
-        memcpy(out, (uint8_t *)q->buf + q->rd_ptr, q->unit_size);
+        memcpy(out, (UINT8 *)q->buf + q->rd_ptr, q->unit_size);
         q->rd_ptr = (q->rd_ptr + q->unit_size) % (q->size * q->unit_size);
         q->used -= q->unit_size;
         // VL_LOG_HEXDUMP_DEBUG("out queue:",out,q->unit_size);
@@ -173,7 +173,7 @@ void vl_queue_flush(vl_queue_t *q)
  * @param q Pointer to the yunji_queue_t structure for which to retrieve the used unit count.
  * @return An unsigned 8-bit integer representing the number of units currently used in the queue.
  */
-uint8_t vl_get_queue_used(vl_queue_t *q)
+UINT8 vl_get_queue_used(vl_queue_t *q)
 {
     return q->used;
 }

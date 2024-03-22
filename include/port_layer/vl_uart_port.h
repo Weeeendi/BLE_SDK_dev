@@ -1,7 +1,7 @@
 /**
  * @file vl_uart_port.h
  * @author wendi (wendy@vehiclink.com)
- * @brief This file is a part of YJ_BLE_SDK
+ * @brief This file is a part of VL_BLE_SDK,It is Uart Interface
  * @version 1.0.0
  * @date 2024-02-23
  * 
@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef YJ_UART_PORT_H
-#define YJ_UART_PORT_H
+#ifndef VL_UART_PORT_H
+#define VL_UART_PORT_H
 
 #include "vl_type.h"
 /**
