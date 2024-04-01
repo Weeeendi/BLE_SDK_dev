@@ -230,7 +230,3 @@ unsigned char mcu_dp_fault_update(unsigned char dpid, unsigned long value)
 }
 
 
-
-void dp_report_byID(){
-
-}

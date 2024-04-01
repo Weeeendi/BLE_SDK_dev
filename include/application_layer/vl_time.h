@@ -12,7 +12,9 @@
 #ifndef VL_TIME_H
 #define VL_TIME_H
 
-#ifdef VL_USE_RTC
+#include "vl_rtc_port.h"
+
+#if VL_USE_RTC
 
 #include "vl_type.h"
 #include "vl_rtc_port.h"
@@ -21,42 +23,31 @@
 extern "C" {
 #endif
 
-#define YEAR_BASE 2000  //RTC record  year only have information of year
-
-
-
+#define YEAR_BASE 2000  //RTC record  year only have information of year 2000~2038
 
 /**
- * @description: rtc to unix time to Beijing time
+ * @brief rtc to unix time to Beijing time
  * @param {uint32_t} unixTime ---unix timestamp
  * @param {rtc_time_t} *rtcTime ---rtc timestamp
  * @param {bool} daylightSaving ---summer time or not
  * @return {*}
  */
-
-
 void covUnixTimeStp2Rtc(uint32_t unixTime, rtc_time_t *rtcTime,bool daylightSaving);
 
 /**
- * @description:  rtc time convert to unix time
+ * @brief rtc time convert to unix time
  * @param {rtc_time_t} *rtcTime need to convert time
  * @param {bool} daylightSaving 
  * @return {*}Unix timestamp 
  */
 uint32_t covRtc2UnixTimeStp(rtc_time_t *rtcTime,bool daylightSaving );
 
-
-/**
- * @brief  Display the current TimeStamp (time and date) on the Hyperterminal.
- */
-void RTC_TimeStampShow(void);
-
 /**
  * @brief Set the rtc time object
  * 
  * @param LocalTime 
  */
-int set_rtc_time(rtc_time_t LocalTime);
+VOID set_rtc_time(rtc_time_t LocalTime);
 
 /**
  * @brief  get the current unix TimeStamp 

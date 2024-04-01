@@ -20,6 +20,9 @@
 #include "vl_sdk_globals.h"
 #include "vl_iot_handle.h"
 #include "vl_type.h"
+#include "vl_log.h"
+#include "vl_ble_queue_send.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -150,6 +153,21 @@ void vl_change_advData(void){
     BLE_LOG_INFO(TAG,"adv data changed ,current bound flag = %d",bound_flag);
 }
 
+void ble_timer_cb(vl_ble_timer_t timer){
+    vl_status_t ret = VL_SUCCESS;
+    ret = ble_state_chk();
+    if(ret != VL_SUCCESS){
+        VL_LOG_DEBUG(TAG,"ble state check error %d",ret);
+    }
+    ret = ble_recv_handle();
+    if(ret != VL_SUCCESS){
+        VL_LOG_DEBUG(TAG,"ble recv handle error %d",ret);
+    }
+    ret = ble_send_queue_handle();
+    if(ret != VL_SUCCESS){
+        VL_LOG_DEBUG(TAG,"ble send queue handle error %d",ret);
+    }
+}
 
 void ble_task(PVOID paramptr){
     /*initialize ble struct*/
@@ -171,8 +189,13 @@ void ble_task(PVOID paramptr){
 
     vl_ble_initialize(&ble_param);
 
+    if(vl_iot_boundf_read() == 1){
+        vl_ble_startAdv();
+    }
+
     /* register callback function */
-    
+    vl_timer_creat(HIL_TIMER_BLE,50,VL_TIMER_REPEAT,ble_timer_cb);
+    vl_timer_start(HIL_TIMER_BLE);
 }
 
 

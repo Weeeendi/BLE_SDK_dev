@@ -51,12 +51,12 @@ typedef enum{
     VL_BLE_EVT_TIME_REQ = 0x8003
 }vl_ble_evt_t;
 
-#pragma pack (1)
+
 typedef struct {
     UINT8 len; //当前数组已使用数据的长度 
     UINT8 curbuf[BLE_BUF_LMT]; //当前数组
-}BLE_BUFF_T;
-#pragma pack ()
+}__VL_BLE_PACKED BLE_BUFF_T;
+
 
 typedef struct 
 {
@@ -79,6 +79,7 @@ extern BLE_BUFF_T BLE_Rev;
 #define MAX_DP_DATA_LEN 255
 
 iot_conn_status_s get_BleBoundStatus(void);
+vl_status_t vl_ble_dp_report(UINT8 dp_id,UINT8 dp_type,UINT8 *dp_data,UINT16 dp_len);
 //=============================================================================
 //Ble data frame
 //=============================================================================

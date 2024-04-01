@@ -132,12 +132,20 @@ typedef void*               PVOID;    // Pointer to void type
 // Function pointer type
 typedef void (*FunctionPointer)(void);  // Function pointer type
 
-// Other types can be added as needed...
 
 #define PRODUCTID_LEN 10
 #define DEVICEID_LEN 16
 #define RANDOMNUM_LEN 4
 #define AES_SESSION_KEY_LENGTH 16
+
+
+/** dp type */
+#define DT_RAW 0  
+#define DT_BOOL 1 
+#define DT_VALUE 2 
+#define DT_STRING 3 
+#define DT_ENUM 4  
+#define DT_BITMAP 5 
 
 typedef enum
 {
@@ -198,6 +206,8 @@ typedef enum {
 
 } vl_status_t;
 
+typedef vl_status_t (*DataPrcessPointer)(UINT8* ,UINT16);  // Function pointer type
+// Other types can be added as needed...
 
 /******BLE PARAMETERS*********************************************/
 #define BLE_ADV_DATA_LEN       30
@@ -232,7 +242,7 @@ typedef struct bt_svc_param_t
         uint16_t uuid[16];  //128bit UUID
         uint16_t permission;//reference to @ref GATT_PROP_BITMAPS_DEFINES
     }character[BLE_CHARACTER_USED];
-}bt_svc_param;
+}__VL_BLE_PACKED bt_svc_param;
 
 // Define a structure to store Bluetooth device attributes parameters
 typedef struct{
@@ -245,18 +255,18 @@ typedef struct{
 
     // Services included in the advertising data
     bt_svc_param service[BLE_SERVICE_USED];
-}vl_ble_attr_param_t;
+}__VL_BLE_PACKED vl_ble_attr_param_t;
 
 /******BLE PARAMETERS**************************************************/
 
 typedef struct vl_ble_type
 {
-    FunctionPointer callback; 
     volatile ble_status_s connect_state;    // @ref BLE_STATUS_S
     volatile uint8_t current_mtu;
     BOOL test_flag;        // 0: not test, 1: test mode
     UINT8 mac[6];
-}vl_ble_obj_t;
+}__VL_BLE_PACKED vl_ble_obj_t;
+
 
 typedef struct vl_iot_type
 {
@@ -269,6 +279,8 @@ typedef struct vl_iot_type
     volatile iot_conn_status_s conn_state;
     volatile iot_work_mode_s work_mode;
     volatile BOOL bound_flag;    // 0: not bound, 1: bounded
-}vl_iot_obj_t;
+    DataPrcessPointer dp_query_cb;
+    DataPrcessPointer dp_recv_cb;
+}__VL_BLE_PACKED vl_iot_obj_t;
 
 #endif

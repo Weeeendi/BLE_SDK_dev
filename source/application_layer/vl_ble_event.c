@@ -26,6 +26,7 @@
 #include "vl_ble_stdlib.h"
 
 #if VL_USE_RTC
+#include "vl_time.h"
 #include "vl_rtc_port.h"
 #endif
 
@@ -316,16 +317,30 @@ vl_status_t vl_ble_pair_handler(ble_event_t *evt) {
 }
 
 vl_status_t vl_ble_dp_data_rev_handler(ble_event_t *evt) {
-    // Implementation goes here
-    return 0; // Placeholder return value
+    vl_status_t ret = VL_SUCCESS;
+#if VL_TEST
+    memcpy(BLE_Send.curbuf+DATA_START,evt->data,evt->len);
+    bt_write_frame(VL_BLE_EVT_DP_DATA_REV,evt->len);
+    return ret;
+#endif
+
+    if(vl_iot_obj.dp_recv_cb != NULL){
+        vl_iot_obj.dp_recv_cb(evt->data,evt->len);
+    }else{
+        ret = VL_BLE_ERR_NOT_FOUND;
+    }
+    return ret; // Placeholder return value
 }
 
 vl_status_t vl_ble_dp_query_handler(ble_event_t *evt) {
-    UINT8 ret = 0;
+    vl_status_t ret = VL_SUCCESS;
     UINT16 index = DATA_START;
-    
-    ret = ble_dp_query(evt->data,evt->len);
-
+    if (vl_iot_obj.dp_query_cb == NULL)
+    {
+        ret = vl_iot_obj.dp_query_cb(evt->data,evt->len);
+    }else{
+        ret = VL_BLE_ERR_NOT_FOUND;
+    }       
     BLE_Send.curbuf[index] = TRUE;
     bt_write_frame(VL_BLE_EVT_DP_QUERY,sizeof(ret)); 
 }
@@ -468,7 +483,6 @@ vl_status_t vl_ble_app_sync_time_handler(ble_event_t *evt) {
         revTime.time_zone = (int16_t)((evt->data[7] & 0xFF)<<8 | evt->data[8]);
         revTime.time_zone /= 100;
         set_rtc_time(revTime);
-        rtc_setUinxTime(get_UnixTimeStamp(0));
     }else{    
         ret = 1;
     }
@@ -513,7 +527,7 @@ vl_status_t vl_ble_dp_report(UINT8 dp_id,UINT8 dp_type,UINT8 *dp_data,UINT16 dp_
     buf_p = BLE_Send.curbuf + index;
     buf_p[0] = dp_id;
     buf_p[1] = dp_type;
-    buf_p[2] = dp_len<<8;
+    buf_p[2] = dp_len>>8;
     buf_p[3] = dp_len && 0xff;
     memcpy(buf_p+4,dp_data,dp_len);
 

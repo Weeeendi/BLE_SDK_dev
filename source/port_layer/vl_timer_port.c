@@ -11,28 +11,29 @@
 
 #include "vl_timer_port.h"
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-vl_status_t vl_timer_init(void)
+__VL_BLE_WEAK vl_status_t vl_timer_init(void)
 {
     //TODO:You need redefine it depending on your hardware.
     return VL_SUCCESS;
 }
 
-vl_status_t vl_timer_creat(UINT8 timer_id, UINT16 timeout, BOOL repeat, FunctionPointer callback){
+__VL_BLE_WEAK vl_status_t vl_timer_creat(UINT8 timer_id, UINT16 timeout, BOOL repeat, FunctionPointer callback){
     //TODO:You need redefine it depending on your hardware.
     return VL_SUCCESS;
 }
 
-vl_status_t vl_timer_start(UINT8 timer_id)
+__VL_BLE_WEAK vl_status_t vl_timer_start(UINT8 timer_id)
 {
     //TODO:You need redefine it depending on your hardware.
     return VL_SUCCESS;
 }
 
-vl_status_t vl_timer_stop(UINT8 timer_id)
+__VL_BLE_WEAK vl_status_t vl_timer_stop(UINT8 timer_id)
 {
     //TODO:You need redefine it depending on your hardware.
     return VL_SUCCESS;

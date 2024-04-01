@@ -14,6 +14,7 @@
 #include "vl_log.h"
 #include "vl_ble_event.h"
 #include "vl_sdk_globals.h"
+#include "vl_timer_port.h"
 
 #include "crc32.h"
 
@@ -27,6 +28,8 @@
 #define DFU_TEMP_BUFFER_SIZE         SECTOR_SIZE
 #define	APP_NEW_FW_MAX_SIZE          (65635*8)    //can protcal max offerset page limit
 
+#define BLE_OTA_OVERTIME             6*5000       //30s
+
 #ifndef SUPPORT_BREAK_RESUME
 #define SUPPORT_BREAK_RESUME         0   /*support break resume*/
 #endif
@@ -39,7 +42,7 @@
 #define READ_FLASH_PORT               vl_nv_flash_read
 #endif
 
-
+UINT8 TIMER_OTA_OVERTIME_ID = 0;
 
 /*LOG TAG*/
 char TAG[] = "OTA";
@@ -117,12 +120,22 @@ UINT32 get_versionNumber(UINT8 type){
     return version;
 }
 
+void vl_ota_over_time_callback(){
+    static UINT32 ota_overtime_cnt = 0;
+    if(ota_overtime_cnt*5000 > BLE_OTA_OVERTIME){
+        VL_LOG_INFO(TAG,"ota over time \r\n");
+        ota_overtime_cnt = 0;
+        vl_timer_stop(TIMER_OTA_OVERTIME_ID);
+        return;
+    }
+    ota_overtime_cnt++;
+}
 
 vl_status_t vl_ota_init(VOID)
 {
     iot_work_status_set(UPDATE_MODE);
     memset(&dfu_settings,'\0',sizeof(dfu_settings_t));
-    OTA_OVERTIME_PARAM = xTaskGetTickCount();
+    vl_timer_creat(TIMER_OTA_OVERTIME_ID,5000,VL_TIMER_REPEAT,vl_ota_over_time_callback);
     return VL_SUCCESS;
 }
 
@@ -504,12 +517,11 @@ vl_status_t vl_ota_over_req(UINT8* recv_data,UINT32 recv_len)
                 break;
             }
 
-            // iot_work_status_set(NORMAL_MODE);
             if(dfu_settings.file_info.firmware_file_type > IoT_4G){
                 //start ota transfer
 #if SUPPORT_PARTTHIRD_OTA
                 #error "support part third ota,and use vl_ota_updata_otherDev to updata process"
-                //Do part third device ota
+                //Do Third party device ota
 #endif
             }
             else{

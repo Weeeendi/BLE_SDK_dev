@@ -17,6 +17,23 @@
 extern "C" {
 #endif
 
+typedef enum tag_timer_id 
+{
+	HIL_TIMER_SYSTICK,
+	HIL_TIMER_UART,
+	HIL_TIMER_BLE,
+	HIL_TIMER_CAN,
+	HIL_TIMER_ID0,
+	HIL_TIMER_ID1,
+	HIL_TIMER_ID2,
+	HIL_TIMER_ID3,
+	HIL_TIMER_ID4,
+	HIL_TIMER_ID5,
+	HIL_TIMER_ID6,
+	HIL_TIMER_ID7,
+	HIL_TIMER_ID8,
+	HIL_TIMER_ID9
+}timer_id_e;
 
 typedef enum{
     VL_TIMER_ONCE = 0,

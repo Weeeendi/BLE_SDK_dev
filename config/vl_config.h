@@ -25,6 +25,11 @@
 #define IOT_MCU_SOFTVER "1.0.0"
 #define IOT_MCU_HARDVER "1.0.0"
 
+
+#ifndef VL_TEST
+#define VL_TEST 0
+#endif
+
 #ifndef VL_LOG_ENABLE
 #define VL_LOG_ENABLE 1						//wheater enable LOG
 #endif
@@ -43,7 +48,7 @@
 #endif
 
 #ifndef VL_USE_RTC
-#define VL_USE_RTC 0						//wheater use rtc
+#define VL_USE_RTC 1						//wheater use rtc
 #endif
 
 #ifndef VL_USE_OTA
@@ -65,54 +70,6 @@
 #define USER_APP_START_ADDR         (0xE000+VL_FLASH_ADDR_START)
 
 #define FLASH_PAGE_SIZE 0x1000
-
-/* DP define*/
-/******************************************************************************
-		dp data point number redefinition,just for example
-******************************************************************************/
-// 启动/熄火开关(可下发可上报)
-// 备注:
-#define DPID_START 1
-
-// 解防设防(可下发可上报)
-// 备注 bool
-#define DPID_GUARD 2
-
-// 档位模式(可下发可上报)
-// 备注:
-#define DPID_LEVEL_MODE 3
-
-// 挡位(可下发可上报)
-// 备注:
-#define DPID_LEVEL 4
-
-// 寻车(可下发可上报)
-// 备注:
-#define DPID_SEARCH 5
-
-// 助力推行(可下发可上报)
-// 备注:
-#define DPID_BOOST_PUSH 9
-
-// 单位设置(可下发可上报)
-// 备注:
-#define DPID_UNIT_SET 11
-
-// 速度限制(可下发可上报)
-// 备注:
-#define DPID_SPEED_LIMIT 13
-
-// 前大灯开关(可下发可上报)
-// 备注:
-#define DPID_HEADLIGHT_SWITCH 14
-
-// 尾灯开关(可下发可上报)
-// 备注:
-#define DPID_TAILLIGHT_SWITCH 15
-
-// speed(只上报)
-// 备注:
-#define DPID_SPEED 16
 
 
 #endif

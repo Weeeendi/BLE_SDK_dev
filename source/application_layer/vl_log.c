@@ -19,6 +19,14 @@ extern "C" {
 
 vl_log_level_t vl_log_current_level = VL_LOG_DEFAULT_LEVEL;
 
+
+/**
+ * @brief Print log
+ * 
+ * @param fmt 
+ * @param ... 
+ * @return VOID 
+ */
 VOID vl_printf(CHAR *fmt, ...)
 {
 	static UINT8 Log_data[512];
@@ -37,6 +45,13 @@ VOID vl_printf(CHAR *fmt, ...)
     vl_log_write((CHAR *)Log_data,Log_data_len);
 }
 
+/**
+ * @brief Print hex dump
+ * 
+ * @param p_data 
+ * @param len 
+ * @return VOID 
+ */
 VOID vl_printf_hexdump(UINT8 *p_data,UINT16 len)
 {
     for(UINT16 i = 0; i < len; i++)
@@ -49,6 +64,12 @@ VOID vl_printf_hexdump(UINT8 *p_data,UINT16 len)
     }
 }
 
+/**
+ * @brief Change log level
+ * 
+ * @param level 
+ * @return VOID 
+ */
 VOID vl_log_change_level(vl_log_level_t level){
     if(level > VL_LOG_LEVEL_MAX) return;
     vl_log_current_level = level;

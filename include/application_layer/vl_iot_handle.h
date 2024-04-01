@@ -24,7 +24,7 @@ extern "C" {
  * 
  */
 
-UINT8 vl_iot_handle_init(VOID);
+VOID vl_iot_handle_init(VOID);
 BOOL vl_iot_boundf_read(VOID);
 
 #ifdef __cplusplus
