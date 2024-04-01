@@ -3,6 +3,7 @@
 This is the BLE SDK for Vehiclink.Using this SDK,you can easily connect to Vehiclink App and send data to Vehiclink App.
 
 ## 1.Overview
+```
 ─config
 ├─driver
 │  └─N32W452CC
@@ -15,7 +16,7 @@ This is the BLE SDK for Vehiclink.Using this SDK,you can easily connect to Vehic
     ├─algorithm_layer
     ├─application_layer
     └─port_layer
-
+```
 user need implement all functions in the file "source/port_layer/**".
 
 
@@ -52,7 +53,10 @@ user need implement all functions in the file "source/port_layer/**".
 </table>
 
 You can see or edit the flash address in the file "config/vl_config.h".
-The OTA (Over-The-Air) related configurations need to be set according to whether the hardware has external storage. The configuration details are as follows: "include/Application_layer/vl_iot_ota.h".
+
+The OTA (Over-The-Air) related configurations need to be set according to whether the hardware has external storage. 
+
+The configuration details are as follows: "include/Application_layer/vl_iot_ota.h".
 
 
 ## 3.Protocol
